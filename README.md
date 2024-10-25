@@ -6,14 +6,17 @@ This guide provides a step-by-step setup for a mobile automation testing framewo
 
 1. **Node.js**: Download and install [Node.js](https://nodejs.org/en/).
 2. **Java Development Kit (JDK)**: Download and install the JDK. Ensure the JAVA_HOME environment variable is set.
-3. **Android Studio**: Download and install [Android Studio](https://developer.android.com/studio), which includes Android SDK tools.
+3. **Android Studio**: Download and install [Android Studio](https://developer.android.com/studio), which includes Android SDK tools. Set android SDK path as ANDROID_HOME in enviroment vairable.
 4. **VS Code**: Download and install VS Code IDE
 5. **Appium Desktop**: Download and install Appium desktop
 6. **Appium**: Install Appium globally by running on terminal:
    ```bash
    npm install -g appium
    ```
-
+6. **Appium Doctor**: Install Appium doctor globally by running on terminal:
+   ```bash
+   npm install -g appium-doctor
+   ```
 ## Step 1: Initialize the Project
 
 1. Create a new project folder:
