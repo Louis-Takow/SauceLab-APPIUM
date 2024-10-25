@@ -48,8 +48,7 @@ During configuration:
 - **What type of testing would you like to do?** Select `E2E Testing - of Web or Mobile Applications`
 - **Where is your automation backend located?** Select `my local machine`
 - **Which environment you would like to automate?** Select `Mobile - native, hybrid and mobile web apps, on Android or iOS`
-- **Which mobile environment you'ld like to automate?** Select `Android- native, hybrid and mobile web apps, tested on emulators and real devices`
-    > using UiAutomator2 (https://www.npmjs.com/package/appium-uiautomator2-driver)
+- **Which mobile environment you'ld like to automate?** Select `Android- native, hybrid and mobile web apps, tested on emulators and real devices using UiAutomator2 (https://www.npmjs.com/package/appium-uiautomator2-driver)`
 - **Which framework do you want to use?** Select `Mocha` 
 - **Do you want to use Typescript to write tests?** Select `no`
 - **Do you want WebdriverIO to autogenerate some test files?** Select `yes`
@@ -129,7 +128,7 @@ Appium will listen by default on `http://127.0.0.1:4723`.
 - In the `test/specs` folder, create a new test file (e.g., `register.e2e.js`)
 - Write test script using `mocha framework`
 
-## Step 7: Run Tests
+## Step 8: Run Tests
 1. ### Login Tests
 To execute the login tests, use the following command:
 

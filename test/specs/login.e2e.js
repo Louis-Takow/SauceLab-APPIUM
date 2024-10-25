@@ -68,9 +68,10 @@ describe('My Login application - Negative cases, Edge case and Postive cases', (
             // Click the login button
             const closeAlert = await browser.$("/hierarchy/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.FrameLayout/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup[1]");
             await closeAlert.click();
+            await closeAlert.click();
             
-            await browser.setTimeout({ implicit: 10000 });
-            // Clear email/contact and password input field
+            // await browser.setTimeout({ implicit: 5000 });
+            // // Clear email/contact and password input field
             await emailOrContactInput.clearValue();
             await passwordInput.clearValue();
         });
