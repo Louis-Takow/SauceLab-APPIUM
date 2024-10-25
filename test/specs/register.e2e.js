@@ -3,24 +3,24 @@ const { expect, browser, $ } = require('@wdio/globals');
 describe('My register application', () => {
     it('should Register with valid credentials', async () => {
         // click 'Register' 
-        const el1 = await browser.$("//android.view.ViewGroup[@content-desc=\"Register\"]/android.widget.TextView");
-        await el1.click();
+        const registerLink = await $("//android.view.ViewGroup[@content-desc=\"Register\"]/android.widget.TextView");
+        await registerLink.click();
 
         // set value to first EditText (Name field)
-        const el2 = await browser.$("//android.view.ViewGroup[@content-desc=\"Register, Already have an account ? \"]/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup[2]/android.widget.ScrollView/android.view.ViewGroup/android.view.ViewGroup[1]/android.widget.EditText");
-        await el2.setValue("John Deo");
+        const fullName = await $("//android.view.ViewGroup[@content-desc=\"Register, Already have an account ? \"]/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup[2]/android.widget.ScrollView/android.view.ViewGroup/android.view.ViewGroup[1]/android.widget.EditText");
+        await fullName.setValue("John Deo");
 
         // set value to second EditText (Phone number)
-        const el3 = await browser.$(`//android.widget.EditText[@text='Phone number']`);
-        await el3.setValue("651562948");
+        const phoneNumber = await $(`//android.widget.EditText[@text='Phone number']`);
+        await phoneNumber.setValue("651562948");
 
         // set value to Password field
-        const el4 = await browser.$(`//android.widget.EditText[@text='Password']`);
-        await el4.setValue("Password@123");
+        const password = await $(`//android.widget.EditText[@text='Password']`);
+        await password.setValue("Password@123");
 
         // set value to Confirm the password field
-        const el5 = await browser.$("//android.view.ViewGroup[@content-desc=\"Register, Already have an account ? \"]/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup[2]/android.widget.ScrollView/android.view.ViewGroup/android.view.ViewGroup[5]/android.widget.EditText");
-        await el5.setValue("Password@123");
+        const confirmPassword = await $("//android.view.ViewGroup[@content-desc=\"Register, Already have an account ? \"]/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup[2]/android.widget.ScrollView/android.view.ViewGroup/android.view.ViewGroup[5]/android.widget.EditText");
+        await confirmPassword.setValue("Password@123");
 
         // // Perform touch actions to scroll
         await driver.performActions([{
@@ -36,15 +36,15 @@ describe('My register application', () => {
         }]);
     
         // click check box to accept policy terms
-        const el8 = await browser.$('//android.view.ViewGroup[@content-desc=""]/android.widget.TextView');
-        await el8.click();
+        const checkBox = await $('//android.view.ViewGroup[@content-desc=""]/android.widget.TextView');
+        await checkBox.click();
 
         // Click 'Register' button
-        const el9 = await browser.$("//android.view.ViewGroup[@content-desc=\"Register\"]/android.view.ViewGroup");
-        await el9.click();
+        const registerButton = await $("//android.view.ViewGroup[@content-desc=\"Register\"]/android.view.ViewGroup");
+        await registerButton.click();
 
         // Close the app
-        // await driver.terminateApp('com.maealth.oyesavings'); // Replace with your app's package name
+        await driver.terminateApp('com.maealth.oyesavings'); // Replace with your app's package name
     });
 });
 

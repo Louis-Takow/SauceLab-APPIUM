@@ -119,7 +119,7 @@ exports.config = {
 
 Appium will listen by default on `http://127.0.0.1:4723`.
 
-## Step 6: Record Element locators with Appium Inspector
+## Step 6: Inspect Element locators with Appium Inspector
 - Start `inspector session`
 - Setup `desired capabilities`and start session
 
