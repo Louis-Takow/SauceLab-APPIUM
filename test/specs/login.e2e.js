@@ -1,4 +1,4 @@
-describe('My Login application - Negative cases, Edge case and Postive cases', () => {
+describe('My Login application - Negative, Edge and Postive cases', () => {
 
     it('should trigger an error for invalid password length of below 8 chars- Edge case', async () => {
          // Clear and set value for the email/contact input field
