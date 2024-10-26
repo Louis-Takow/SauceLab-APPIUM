@@ -1,4 +1,4 @@
-describe('My Login application - Negative, Edge and Postive cases', () => {
+describe('My Login application - Negative cases, Edge case and Postive cases', () => {
 
     it('should trigger an error for invalid password length of below 8 chars- Edge case', async () => {
          // Clear and set value for the email/contact input field
@@ -65,7 +65,7 @@ describe('My Login application - Negative, Edge and Postive cases', () => {
            const elementText = await errorMessage.getText();
            await expect(elementText).toContain("Oh Oh! user not found");
 
-            // Click the login button
+            // Close error meassage
             const closeAlert = await $("/hierarchy/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.FrameLayout/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup[1]");
             await closeAlert.click();
             await closeAlert.click();
@@ -92,8 +92,8 @@ describe('My Login application - Negative, Edge and Postive cases', () => {
             const loginButton = await $("//android.view.ViewGroup[@content-desc=\"Login\"]/android.view.ViewGroup");
             await loginButton.click();
 
+             // Verify successful login by checking a post-login element
             const totalSaved = await $(`android.widget.ImageView`);
-            // Assert that the total saved is displayed to ensure user has logged in
             await totalSaved.isDisplayed();
 
             // Optional: Close the app after test execution
