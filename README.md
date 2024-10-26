@@ -106,13 +106,13 @@ exports.config = {
 ```
 
 ### Important Configuration Notes
-- TO get attached `deviceName`or enter command on terminal:
- ```bash
-  adb shell getprop ro.product.model
+- To get attached `deviceName`or enter command on terminal:
+   ```bash
+   adb shell getprop ro.product.model
    ```
-- TO get `platformVersion`or enter command on terminal:
- ```bash
-  adb shell getprop ro.build.version.release
+- To get `platformVersion`or enter command on terminal:
+   ```bash
+   adb shell getprop ro.build.version.release
    ```
 - Set the `appium:app` capability to the full path of your APK file (e.g., `C:\\Users\\Username\\Downloads\\ApkName.apk`).
 
