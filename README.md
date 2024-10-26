@@ -19,13 +19,19 @@ This guide provides a step-by-step setup for a mobile automation testing framewo
    ```
 ## Step 1: Initialize the Project
 
-1. Create a new project folder:
+1. Create and navigate to a new project folder:
    ```bash
    mkdir mobile-automation-framework
    cd mobile-automation-framework
    ```
+2. **Clone this repository** in terminal of new project folder.
 
-2. Initialize a Node.js project:
+''' command line terminal
+Copy code
+git clone <repository-url>
+cd Webdriver.io---Appium-Mocha
+'''
+3. Initialize a Node.js project:
    ```bash
    npm init -y
    ```
@@ -82,15 +88,10 @@ exports.config = {
         'appium:app': 'C:\\Users\\joelt\\Downloads\\Nkwa.apk',  // Path to your APK file
         'appium:automationName': 'UiAutomator2',
     }],
-    logLevel: 'info',
-    waitforTimeout: 10000,
-    connectionRetryTimeout: 120000,
-    connectionRetryCount: 3,
     services: ['appium'],
     framework: 'mocha',
     reporters: ['spec'],
     mochaOpts: {
-        ui: 'bdd',
         timeout: 60000
     }
 };
@@ -126,10 +127,11 @@ Appium will listen by default on `http://127.0.0.1:4723`.
 - Start `inspector session`
 - Setup `desired capabilities`and start session
 
-## Step 7: Create a Test Script
+## Step 7: Create/View a Test Script
 
-- In the `test/specs` folder, create a new test file (e.g., `register.e2e.js`)
-- Write test script using `mocha framework`
+- Open project directory with VS Code IDE
+- In the `test/specs` folder, create/view test files (e.g., `register.e2e.js`)
+- Test script are written using `mocha framework`
 
 ## Step 8: Run Tests
 1. ### Login Tests
