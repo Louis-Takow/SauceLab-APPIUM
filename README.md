@@ -33,12 +33,12 @@ When combined, WebdriverIO can leverage Appium’s capabilities to automate mobi
    mkdir mobile-automation-framework
    cd mobile-automation-framework
    ```
-2. **Clone this repository** in terminal of new project folder.
+2. **Clone this repository** through terminal of new project folder.
 
-```bash
-git clone <repository-url>
-cd Webdriver.io---Appium-Mocha
-  ```
+   ```bash
+   git clone <repository-url>
+   cd Webdriver.io---Appium-Mocha
+   ```
 3. Initialize a Node.js project:
    ```bash
    npm init -y
