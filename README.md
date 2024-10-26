@@ -1,6 +1,15 @@
 # Mobile Automation Framework Setup
 
-This guide provides a step-by-step setup for a mobile automation testing framework using WebdriverIO, Appium, Mocha, and Spec reporter. We’ll configure an Android emulator to run the tests on a specified APK file.
+This guide provides a step-by-step setup for a mobile automation testing framework using: 
+1. **WebdriverIO as a Test Runner**:
+WebdriverIO acts as a test runner and provides a structured way to write, organize, and execute tests for both web and mobile applications.
+2. **Appium as an Automation Engine**:
+Appium serves as the underlying automation engine that communicates with mobile devices to perform actions on the app's UI.
+3. **Spec Reporter**:
+To give detail report after test execution.
+
+**Together for Mobile Testing**:
+When combined, WebdriverIO can leverage Appium’s capabilities to automate mobile applications effectively while providing a rich API for test writing and integration with other tools.We’ll configure an Android emulator to run the tests on a specified APK file.
 
 ## Prerequisites
 
