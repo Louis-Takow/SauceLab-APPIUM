@@ -35,11 +35,10 @@ When combined, WebdriverIO can leverage Appium’s capabilities to automate mobi
    ```
 2. **Clone this repository** in terminal of new project folder.
 
-''' command line terminal
-Copy code
+```bash
 git clone <repository-url>
 cd Webdriver.io---Appium-Mocha
-'''
+  ```
 3. Initialize a Node.js project:
    ```bash
    npm init -y
