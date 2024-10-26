@@ -106,13 +106,17 @@ exports.config = {
 ```
 
 ### Important Configuration Notes
-- To get attached `deviceName`or enter command on terminal:
+- To get attached `deviceName` enter command on terminal:
    ```bash
    adb shell getprop ro.product.model
    ```
-- To get `platformVersion`or enter command on terminal:
+- To get `platformVersion` enter command on terminal:
    ```bash
    adb shell getprop ro.build.version.release
+   ```
+- To get `appPackageName` and `appActivity`enter command on terminal:
+   ```bash
+   adb shell dumpsys window | findstr /R "mCurrentFocus"
    ```
 - Set the `appium:app` capability to the full path of your APK file (e.g., `C:\\Users\\Username\\Downloads\\ApkName.apk`).
 
