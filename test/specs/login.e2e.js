@@ -1,7 +1,7 @@
 describe('My Login application - Negative cases, Edge case and Postive cases', () => {
 
     it('should trigger an error for invalid password length of below 8 chars- Edge case', async () => {
-         // Clear and set value for the email/contact input field
+         // Clear the email/contact input field
         const emailOrContactInput = await $("//android.view.ViewGroup[@content-desc=\"Login, Dont have an account? \"]/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup[2]/android.widget.ScrollView/android.view.ViewGroup/android.view.ViewGroup[1]/android.widget.EditText"); 
         await emailOrContactInput.clearValue();
 
@@ -10,12 +10,11 @@ describe('My Login application - Negative cases, Edge case and Postive cases', (
         await passwordInput.clearValue();
         await passwordInput.setValue("12345");
 
+        // Assert that the error message is visible
         const errorMessage = await $("//android.view.ViewGroup[@content-desc=\"Login, Dont have an account? \"]/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup[2]/android.widget.ScrollView/android.view.ViewGroup/android.widget.TextView[4]");
-
-        // Assert that the element is visible
         await expect(errorMessage).toBeDisplayed();
 
-       // Assert that the element contains the expected text
+       // Assert that the error message contains the expected text
        const elementText = await errorMessage.getText();
        await expect(elementText).toContain("Password must be at least 8 characters");
 
@@ -31,12 +30,11 @@ describe('My Login application - Negative cases, Edge case and Postive cases', (
             await emailOrContactInput.clearValue();
             await emailOrContactInput.setValue("invalid format");
 
+            // Assert that the error message is visible
             const errorMessage = await $("//android.view.ViewGroup[@content-desc=\"Login, Dont have an account? \"]/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup[2]/android.widget.ScrollView/android.view.ViewGroup/android.widget.TextView[4]");
-
-            // Assert that the element is visible
             await expect(errorMessage).toBeDisplayed();
 
-           // Assert that the element contains the expected text
+           // Assert that the error message contains the expected text
            const elementText = await errorMessage.getText();
            await expect(elementText).toContain("Please enter a valid email or phone number");
 
@@ -56,12 +54,11 @@ describe('My Login application - Negative cases, Edge case and Postive cases', (
             const loginButton = await $("//android.view.ViewGroup[@content-desc=\"Login\"]/android.view.ViewGroup");
             await loginButton.click();
 
+            // Assert that the error message is visible
             const errorMessage = await $("/hierarchy/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.FrameLayout/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup[2]/android.view.ViewGroup/android.widget.ScrollView/android.view.ViewGroup/android.widget.TextView[2]");
-
-            // Assert that the element is visible
             await expect(errorMessage).toBeDisplayed();
 
-           // Assert that the element contains the expected text
+           // Assert that the error message contains the expected text
            const elementText = await errorMessage.getText();
            await expect(elementText).toContain("Oh Oh! user not found");
 
@@ -70,8 +67,7 @@ describe('My Login application - Negative cases, Edge case and Postive cases', (
             await closeAlert.click();
             await closeAlert.click();
             
-            // await browser.setTimeout({ implicit: 5000 });
-            // // Clear email/contact and password input field
+            // Clear email/contact and password input field
             await emailOrContactInput.clearValue();
             await passwordInput.clearValue();
         });
@@ -83,7 +79,7 @@ describe('My Login application - Negative cases, Edge case and Postive cases', (
             await emailOrContactInput.clearValue();
             await emailOrContactInput.setValue("651562948");
 
-            // Set value for the password input field
+            // Clear and Set value for the password input field
             const passwordInput = await $(`//android.widget.EditText[@text='Password']`);
             await passwordInput.clearValue();
             await passwordInput.setValue("Password@123");
@@ -92,7 +88,7 @@ describe('My Login application - Negative cases, Edge case and Postive cases', (
             const loginButton = await $("//android.view.ViewGroup[@content-desc=\"Login\"]/android.view.ViewGroup");
             await loginButton.click();
 
-             // Verify successful login by checking a post-login element
+            // Verify successful login by checking a post-login element
             const totalSaved = await $(`android.widget.ImageView`);
             await totalSaved.isDisplayed();
 
