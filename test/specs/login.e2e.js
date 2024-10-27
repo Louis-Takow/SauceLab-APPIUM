@@ -1,7 +1,8 @@
 describe('My Login application - Negative cases, Edge case and Postive cases', () => {
 
     it('should trigger an error for invalid password length of below 8 chars- Edge case', async () => {
-         // Clear the email/contact input field
+        await driver.setTimeout({ implicit: 5000 }); // implicit wait
+        // Clear the email/contact input field
         const emailOrContactInput = await $("//android.view.ViewGroup[@content-desc=\"Login, Dont have an account? \"]/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup[2]/android.widget.ScrollView/android.view.ViewGroup/android.view.ViewGroup[1]/android.widget.EditText"); 
         await emailOrContactInput.clearValue();
 
@@ -93,7 +94,7 @@ describe('My Login application - Negative cases, Edge case and Postive cases', (
             await totalSaved.isDisplayed();
 
             // Optional: Close the app after test execution
-             await driver.terminateApp('com.maealth.oyesavings');
+            await driver.terminateApp('com.maealth.oyesavings');
         });
        
     });
