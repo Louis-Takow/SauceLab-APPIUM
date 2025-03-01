@@ -6,7 +6,7 @@ exports.config = {
         platformName: 'Android',
        'appium:platformVersion': '11.0',  // Replace with the Android version of your emulator
        'appium:deviceName': 'emulator-5554',  // Match the ID from adb devices
-       'appium:app': 'C:\\Users\\joelt\\Downloads\\Nkwa.apk',  // Path to your APK file
+       'appium:app': 'C:\\Users\\joelt\\Downloads\\Android.SauceLabs.Mobile.Sample.app.2.7.1.apk',  // Path to your APK file
        'appium:automationName': 'UiAutomator2',
         'appium:noReset': true,
     }],

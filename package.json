@@ -9,17 +9,29 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": "",
+  "description": "This guide provides a step-by-step setup for a mobile automation testing framework using: \r 1. **WebdriverIO as a Test Runner**:\r WebdriverIO acts as a test runner and provides a structured way to write, organize, and execute tests for both web and mobile applications.\r 2. **Appium as an Automation Engine**:\r Appium serves as the underlying automation engine that communicates with mobile devices to perform actions on the app's UI.\r 3. **Spec Reporter**:\r To give detail report after test execution.",
   "devDependencies": {
-    "@wdio/appium-service": "^9.2.1",
-    "@wdio/cli": "^9.2.1",
-    "@wdio/local-runner": "^9.2.1",
-    "@wdio/mocha-framework": "^9.1.3",
-    "@wdio/spec-reporter": "^9.1.3",
+    "@wdio/appium-service": "^9.10.0",
+    "@wdio/cli": "^9.10.0",
+    "@wdio/local-runner": "^9.10.0",
+    "@wdio/mocha-framework": "^9.9.0",
+    "@wdio/spec-reporter": "^9.9.0",
     "appium-uiautomator2-driver": "^3.8.0"
   },
   "dependencies": {
     "appium": "^2.12.0",
     "wd": "^1.14.0"
-  }
+  },
+  "directories": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Louis-Takow/Webdriver.io---Appium-Mocha.git"
+  },
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Louis-Takow/Webdriver.io---Appium-Mocha/issues"
+  },
+  "homepage": "https://github.com/Louis-Takow/Webdriver.io---Appium-Mocha#readme"
 }
