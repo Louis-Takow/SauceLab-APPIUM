@@ -43,10 +43,17 @@ jobs:
           emulator-options: "-no-window -gpu swiftshader_indirect -no-audio -no-boot-anim"
           disable-animations: true
           script: echo "Emulator started"
-          emu-wait-timeout: 600
+          emu-wait-timeout: 1200
 
       - name: Verify Connected Devices
-        run: adb devices
+        run: |
+          adb wait-for-device
+          adb devices
+
+      - name: Ensure Device is Online
+        run: |
+          sleep 10
+          adb devices
 
       - name: Restart ADB
         run: adb kill-server && adb start-server
