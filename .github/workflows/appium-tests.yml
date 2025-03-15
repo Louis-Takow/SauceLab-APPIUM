@@ -8,7 +8,7 @@ on:
 
 jobs:
   test:
-    runs-on: macos-latest  # Use MacOS for ARM compatibility
+    runs-on: macos-latest  # Use MacOS for compatibility
 
     steps:
       - name: Checkout Repository
@@ -36,17 +36,18 @@ jobs:
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 30
-          arch: arm64-v8a  # Use ARM instead of x86_64
+          arch: x86_64  # Ensure compatibility with macOS runners
           profile: pixel_4
           avd-name: test-emulator
           force-avd-creation: true
           emulator-options: "-no-window -gpu swiftshader_indirect -no-audio -no-boot-anim"
           disable-animations: true
           script: echo "Emulator started"
-          emu-wait-timeout: 600
 
-      - name: Verify Connected Devices
-        run: adb devices
+      - name: Wait for Emulator to Start
+        run: |
+          adb wait-for-device shell getprop sys.boot_completed | grep -m 1 "1" || sleep 30
+          adb devices
 
       - name: Restart ADB
         run: adb kill-server && adb start-server
@@ -62,4 +63,4 @@ jobs:
           path: test-results/
 
       - name: Stop Emulator
-        run: adb emu kill
+        run: adb -s emulator-5554 emu kill
