@@ -28,8 +28,9 @@ jobs:
 
       - name: Install Required Android SDK Components
         run: |
-          echo "Installing Android SDK components..."
-          sdkmanager --install "platform-tools" "cmdline-tools;latest" "build-tools;30.0.3" "system-images;android-30;google_apis_playstore;x86_64" "emulator"
+          echo "Installing required SDK components..."
+          sdkmanager --install "platform-tools" "emulator" "cmdline-tools;latest" "system-images;android-30;google_apis_playstore;x86_64"
+          echo "SDK setup complete."
 
       - name: Start Appium Server
         run: |
@@ -41,16 +42,20 @@ jobs:
         run: |
           echo "Setting up AVD..."
           $ANDROID_SDK_ROOT="$env:ANDROID_HOME"
-          if (Test-Path "$ANDROID_SDK_ROOT/cmdline-tools/latest/bin/avdmanager.bat") {
-            & "$ANDROID_SDK_ROOT/cmdline-tools/latest/bin/avdmanager.bat" create avd -n test-emulator -k "system-images;android-30;google_apis_playstore;x86_64" --device "pixel_4"
+          $AVD_NAME="test-emulator"
+          
+          # Check if AVD already exists
+          if (!(avdmanager list avd | Select-String $AVD_NAME)) {
+            echo "Creating AVD..."
+            avdmanager create avd -n $AVD_NAME -k "system-images;android-30;google_apis_playstore;x86_64" --device "pixel_4"
           } else {
-            echo "AVD Manager not found!"
-            exit 1
+            echo "AVD already exists, skipping creation."
           }
+
           echo "Starting AVD..."
           $emulatorPath = "$ANDROID_SDK_ROOT/emulator/emulator.exe"
           if (Test-Path $emulatorPath) {
-            & $emulatorPath -avd test-emulator -no-audio -no-window -gpu swiftshader_indirect -no-boot-anim
+            Start-Process -NoNewWindow -FilePath $emulatorPath -ArgumentList "-avd $AVD_NAME -no-audio -no-window -gpu swiftshader_indirect -no-boot-anim" -PassThru
           } else {
             echo "Emulator binary not found!"
             exit 1
