@@ -2,13 +2,15 @@ name: Appium Tests with WebdriverIO
 
 on:
   push:
-    branches: [main, feature/*]
+    branches:
+      - main
   pull_request:
-    branches: [main, feature/*]
+    branches:
+      - main
 
 jobs:
   test:
-    runs-on: ubuntu-latest
+    runs-on: macos-latest  # Use Ubuntu if running headless
 
     steps:
       - name: Checkout Repository
@@ -23,14 +25,11 @@ jobs:
       - name: Install Dependencies
         run: npm install
 
-      - name: Set Up Java & Android SDK
-        uses: android-actions/setup-android@v3
-
       - name: Start Appium Server
         run: |
           npm install -g appium
           appium --version
-          nohup appium --port 4723 > appium.log 2>&1 &
+          nohup appium > appium.log 2>&1 &
 
       - name: Set Up Android Emulator
         uses: reactivecircus/android-emulator-runner@v2
@@ -41,22 +40,7 @@ jobs:
           avd-name: test-emulator
           force-avd-creation: true
           emulator-options: "-no-window -gpu swiftshader_indirect -no-audio -no-boot-anim"
-          disable-animations: true
           script: echo "Emulator started"
-          emu-wait-timeout: 1200
-
-      - name: Verify Connected Devices
-        run: |
-          adb wait-for-device
-          adb devices
-
-      - name: Ensure Device is Online
-        run: |
-          sleep 10
-          adb devices
-
-      - name: Restart ADB
-        run: adb kill-server && adb start-server
 
       - name: Run WebdriverIO Tests
         run: npm test
