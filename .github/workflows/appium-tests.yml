@@ -46,11 +46,14 @@ jobs:
 
       - name: Wait for Emulator to Start
         run: |
-          adb wait-for-device shell getprop sys.boot_completed | grep -m 1 "1" || sleep 30
+          adb wait-for-device shell getprop sys.boot_completed | grep -m 1 "1" || sleep 60
           adb devices
 
-      - name: Restart ADB
-        run: adb kill-server && adb start-server
+      - name: Restart ADB and Verify Emulator
+        run: |
+          adb kill-server
+          adb start-server
+          adb devices
 
       - name: Run WebdriverIO Tests
         run: npm test
