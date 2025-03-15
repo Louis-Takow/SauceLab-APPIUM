@@ -30,7 +30,7 @@ jobs:
         run: |
           npm install -g appium
           appium --version
-          Start-Process -NoNewWindow -FilePath "appium" -ArgumentList "--port 4723" -RedirectStandardOutput "appium.log"
+          npx appium --port 4723 --log appium.log &
 
       - name: Set Up Android Emulator
         run: |
