@@ -1,0 +1,58 @@
+name: Appium Tests with WebdriverIO
+
+on:
+  push:
+    branches: [main, develop, feature/*]
+  pull_request:
+    branches: [main, develop, feature/*]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set Up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Set Up Java & Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Start Appium Server
+        run: |
+          npm install -g appium
+          appium --version
+          nohup appium > appium.log 2>&1 &
+
+      - name: Set Up Android Emulator
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 30
+          arch: x86_64
+          profile: pixel_4
+          avd-name: test-emulator
+          force-avd-creation: true
+          emulator-options: "-no-window -gpu swiftshader_indirect -no-audio -no-boot-anim"
+          disable-animations: true
+          script: echo "Emulator started"
+
+      - name: Run WebdriverIO Tests
+        run: npm test
+
+      - name: Upload Test Reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-reports
+          path: test-results/
+
+      - name: Stop Emulator
+        run: adb emu kill
