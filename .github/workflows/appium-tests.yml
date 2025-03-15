@@ -30,24 +30,28 @@ jobs:
         run: |
           npm install -g appium
           appium --version
-          npx appium --port 4723 --log appium.log &
+          Start-Process -NoNewWindow -FilePath "npx" -ArgumentList "appium --port 4723 --log appium.log" -PassThru
 
       - name: Set Up Android Emulator
         run: |
           echo "Setting up AVD..."
           avdmanager create avd -n test-emulator -k "system-images;android-30;google_apis_playstore;x86_64"
           echo "Starting AVD..."
-          emulator -avd test-emulator -no-audio -no-window -gpu swiftshader_indirect -no-boot-anim &
+          Start-Process -NoNewWindow -FilePath "emulator" -ArgumentList "-avd test-emulator -no-audio -no-window -gpu swiftshader_indirect -no-boot-anim" -PassThru
 
       - name: Wait for Emulator to Start
         run: |
           echo "Waiting for emulator to start..."
           adb start-server
-          for /l %%x in (1, 1, 10) do (
-            adb devices | findstr "emulator" && exit /b 0
-            timeout /t 15
-          )
-          adb wait-for-device shell getprop sys.boot_completed | findstr "1" || timeout /t 60
+          $retries = 10
+          $counter = 0
+          while ($counter -lt $retries) {
+            $devices = adb devices | Select-String "emulator"
+            if ($devices) { break }
+            Start-Sleep -Seconds 15
+            $counter++
+          }
+          adb wait-for-device shell getprop sys.boot_completed | Select-String "1" || Start-Sleep -Seconds 60
           adb devices
 
       - name: Restart ADB and Verify Emulator
