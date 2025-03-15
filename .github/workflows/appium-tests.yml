@@ -26,6 +26,11 @@ jobs:
       - name: Set Up Java & Android SDK
         uses: android-actions/setup-android@v3
 
+      - name: Install Required Android SDK Components
+        run: |
+          echo "Installing Android SDK components..."
+          sdkmanager --install "platform-tools" "cmdline-tools;latest" "build-tools;30.0.3" "system-images;android-30;google_apis_playstore;x86_64" "emulator"
+
       - name: Start Appium Server
         run: |
           npm install -g appium
@@ -35,14 +40,15 @@ jobs:
       - name: Set Up Android Emulator
         run: |
           echo "Setting up AVD..."
-          if (Test-Path "$env:ANDROID_HOME/tools/bin/avdmanager.bat") {
-            & "$env:ANDROID_HOME/tools/bin/avdmanager.bat" create avd -n test-emulator -k "system-images;android-30;google_apis_playstore;x86_64"
+          $ANDROID_SDK_ROOT="$env:ANDROID_HOME"
+          if (Test-Path "$ANDROID_SDK_ROOT/cmdline-tools/latest/bin/avdmanager.bat") {
+            & "$ANDROID_SDK_ROOT/cmdline-tools/latest/bin/avdmanager.bat" create avd -n test-emulator -k "system-images;android-30;google_apis_playstore;x86_64" --device "pixel_4"
           } else {
             echo "AVD Manager not found!"
             exit 1
           }
           echo "Starting AVD..."
-          $emulatorPath = "$env:ANDROID_HOME/emulator/emulator.exe"
+          $emulatorPath = "$ANDROID_SDK_ROOT/emulator/emulator.exe"
           if (Test-Path $emulatorPath) {
             & $emulatorPath -avd test-emulator -no-audio -no-window -gpu swiftshader_indirect -no-boot-anim
           } else {
