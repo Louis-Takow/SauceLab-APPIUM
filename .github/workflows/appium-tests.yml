@@ -35,9 +35,20 @@ jobs:
       - name: Set Up Android Emulator
         run: |
           echo "Setting up AVD..."
-          avdmanager create avd -n test-emulator -k "system-images;android-30;google_apis_playstore;x86_64"
+          if (Test-Path "$env:ANDROID_HOME/tools/bin/avdmanager.bat") {
+            & "$env:ANDROID_HOME/tools/bin/avdmanager.bat" create avd -n test-emulator -k "system-images;android-30;google_apis_playstore;x86_64"
+          } else {
+            echo "AVD Manager not found!"
+            exit 1
+          }
           echo "Starting AVD..."
-          Start-Process -NoNewWindow -FilePath "emulator" -ArgumentList "-avd test-emulator -no-audio -no-window -gpu swiftshader_indirect -no-boot-anim" -PassThru
+          $emulatorPath = "$env:ANDROID_HOME/emulator/emulator.exe"
+          if (Test-Path $emulatorPath) {
+            & $emulatorPath -avd test-emulator -no-audio -no-window -gpu swiftshader_indirect -no-boot-anim
+          } else {
+            echo "Emulator binary not found!"
+            exit 1
+          }
 
       - name: Wait for Emulator to Start
         run: |
