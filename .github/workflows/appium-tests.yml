@@ -45,9 +45,6 @@ jobs:
           script: echo "Emulator started"
           emu-wait-timeout: 600
 
-      - name: Wait for Emulator to Boot
-        run: adb wait-for-device shell 'while [[ -z $(getprop sys.boot_completed) ]]; do sleep 1; done;'
-
       - name: Verify Connected Devices
         run: adb devices
 
