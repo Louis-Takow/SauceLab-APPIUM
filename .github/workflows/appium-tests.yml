@@ -8,7 +8,7 @@ on:
 
 jobs:
   test:
-    runs-on: macos-latest  # Use MacOS for compatibility
+    runs-on: windows-latest  # Use Windows for compatibility
 
     steps:
       - name: Checkout Repository
@@ -30,23 +30,24 @@ jobs:
         run: |
           npm install -g appium
           appium --version
-          nohup appium --port 4723 > appium.log 2>&1 &
+          Start-Process -NoNewWindow -FilePath "appium" -ArgumentList "--port 4723" -RedirectStandardOutput "appium.log"
 
       - name: Set Up Android Emulator
-        uses: reactivecircus/android-emulator-runner@v2
-        with:
-          api-level: 30
-          arch: x86_64  # Ensure compatibility with macOS runners
-          profile: pixel_4
-          avd-name: test-emulator
-          force-avd-creation: true
-          emulator-options: "-no-window -gpu swiftshader_indirect -no-audio -no-boot-anim"
-          disable-animations: true
-          script: echo "Emulator started"
+        run: |
+          echo "Setting up AVD..."
+          avdmanager create avd -n test-emulator -k "system-images;android-30;google_apis_playstore;x86_64"
+          echo "Starting AVD..."
+          emulator -avd test-emulator -no-audio -no-window -gpu swiftshader_indirect -no-boot-anim &
 
       - name: Wait for Emulator to Start
         run: |
-          adb wait-for-device shell getprop sys.boot_completed | grep -m 1 "1" || sleep 60
+          echo "Waiting for emulator to start..."
+          adb start-server
+          for /l %%x in (1, 1, 10) do (
+            adb devices | findstr "emulator" && exit /b 0
+            timeout /t 15
+          )
+          adb wait-for-device shell getprop sys.boot_completed | findstr "1" || timeout /t 60
           adb devices
 
       - name: Restart ADB and Verify Emulator
