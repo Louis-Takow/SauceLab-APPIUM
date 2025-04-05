@@ -28,43 +28,40 @@ jobs:
 
       - name: Install Required Android SDK Components
         run: |
-          echo "Installing SDK components..."
+          echo "Installing required SDK components..."
           sdkmanager --install "platform-tools" "emulator" "cmdline-tools;latest" "system-images;android-30;google_apis_playstore;x86_64"
+          echo "SDK setup complete."
 
-      - name: Create Android Emulator
+      - name: Start Appium Server
         run: |
-          echo "Creating AVD..."
-          echo "no" | avdmanager create avd -n test-emulator -k "system-images;android-30;google_apis_playstore;x86_64" --device "pixel_4"
+          npm install -g appium
+          appium --version
+          nohup appium --port 4723 --log appium.log > /dev/null 2>&1 &
 
-      - name: Start Emulator
+      - name: Create and Start Android Emulator
         run: |
-          echo "Starting emulator..."
-          $ANDROID_HOME/emulator/emulator -avd test-emulator -no-audio -no-window -gpu swiftshader_indirect -no-boot-anim &
-          EMU_PID=$!
-          echo "Emulator PID: $EMU_PID"
+          echo "Creating and starting Android Emulator..."
+          echo "no" | avdmanager create avd -n test-emulator -k "system-images;android-30;google_apis_playstore;x86_64" --device "pixel"
+          $ANDROID_HOME/emulator/emulator -avd test-emulator -no-audio -no-window -gpu swiftshader_indirect -no-boot-anim > /dev/null 2>&1 &
 
       - name: Wait for Emulator to Boot
         run: |
           echo "Waiting for emulator to boot..."
           adb wait-for-device
-          boot_completed=""
-          retry=0
-          while [[ "$boot_completed" != "1" && $retry -lt 15 ]]; do
-            sleep 10
-            boot_completed=$(adb shell getprop sys.boot_completed | tr -d '\r')
-            echo "Boot status: $boot_completed"
-            retry=$((retry + 1))
+          timeout=300
+          interval=10
+          elapsed=0
+          while [[ "$(adb shell getprop sys.boot_completed | tr -d '\r')" != "1" ]]; do
+            if [ $elapsed -ge $timeout ]; then
+              echo "Timeout waiting for emulator to boot."
+              exit 1
+            fi
+            echo "Still waiting... ($elapsed/$timeout seconds)"
+            sleep $interval
+            elapsed=$((elapsed + interval))
           done
-          if [ "$boot_completed" != "1" ]; then
-            echo "Emulator failed to boot in time"
-            exit 1
-          fi
+          echo "Emulator booted successfully!"
           adb devices
-
-      - name: Start Appium Server
-        run: |
-          npm install -g appium
-          nohup appium --port 4723 --log appium.log > /dev/null 2>&1 &
 
       - name: Run WebdriverIO Tests
         run: npm test
@@ -77,4 +74,4 @@ jobs:
           path: test-results/
 
       - name: Stop Emulator
-        run: adb -s emulator-5554 emu kill || true
+        run: adb -s emulator-5554 emu kill
