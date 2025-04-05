@@ -41,25 +41,14 @@ jobs:
       - name: Set Up Android Emulator
         run: |
           echo "Setting up AVD..."
-          $ANDROID_SDK_ROOT="$env:ANDROID_HOME"
-          $AVD_NAME="test-emulator"
-          
-          # Check if AVD already exists
-          if (!(avdmanager list avd | Select-String $AVD_NAME)) {
-            echo "Creating AVD..."
-            avdmanager create avd -n $AVD_NAME -k "system-images;android-30;google_apis_playstore;x86_64" --device "pixel_4"
-          } else {
-            echo "AVD already exists, skipping creation."
-          }
+          AVD_NAME="test-emulator"
+
+          echo "Creating AVD if it doesn't exist..."
+          echo "no" | avdmanager create avd -n $AVD_NAME -k "system-images;android-30;google_apis_playstore:x86_64" --device "pixel"
 
           echo "Starting AVD..."
-          $emulatorPath = "$ANDROID_SDK_ROOT/emulator/emulator.exe"
-          if (Test-Path $emulatorPath) {
-            Start-Process -NoNewWindow -FilePath $emulatorPath -ArgumentList "-avd $AVD_NAME -no-audio -no-window -gpu swiftshader_indirect -no-boot-anim" -PassThru
-          } else {
-            echo "Emulator binary not found!"
-            exit 1
-          }
+          $ANDROID_HOME/emulator/emulator -avd $AVD_NAME -no-audio -no-window -gpu swiftshader_indirect -no-boot-anim &
+
 
       - name: Wait for Emulator to Start
         run: |
