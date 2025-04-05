@@ -8,7 +8,7 @@ on:
 
 jobs:
   test:
-    runs-on: windows-latest  # Use Windows for compatibility
+    runs-on: ubuntu-latest  # Use Windows for compatibility
 
     steps:
       - name: Checkout Repository
