@@ -21,7 +21,7 @@ describe('My e-commerce application', () => {
     
         // Verify successful login by checking a post-login element
         const postLoginElement = await $(`//android.widget.EditText[@text='PRODUCTS']`);
-        await postLoginElement.isDisplayed();
+        await postLoginElement.isDisplayed(); 
     
    
             // Step 1: Add first item to cart
