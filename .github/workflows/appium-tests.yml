@@ -34,41 +34,43 @@ jobs:
 
       - name: Start Appium Server
         run: |
-           npm install -g appium
-           appium --version
-           nohup appium --port 4723 --log appium.log > /dev/null 2>&1 &
+          npm install -g appium
+          appium --version
+          nohup appium --port 4723 --log appium.log > /dev/null 2>&1 &
 
       - name: Set Up Android Emulator
         run: |
           echo "Setting up AVD..."
           AVD_NAME="test-emulator"
 
-          echo "Creating AVD if it doesn't exist..."
-          echo "no" | avdmanager create avd -n $AVD_NAME -k "system-images;android-30;google_apis_playstore:x86_64" --device "pixel"
+          if ! avdmanager list avd | grep -q "$AVD_NAME"; then
+            echo "Creating AVD..."
+            echo "no" | avdmanager create avd -n $AVD_NAME -k "system-images;android-30;google_apis_playstore;x86_64" --device "pixel"
+          else
+            echo "AVD already exists."
+          fi
 
           echo "Starting AVD..."
           $ANDROID_HOME/emulator/emulator -avd $AVD_NAME -no-audio -no-window -gpu swiftshader_indirect -no-boot-anim &
 
-
       - name: Wait for Emulator to Start
         run: |
-          echo "Waiting for emulator to start..."
+          echo "Waiting for emulator to boot..."
           adb start-server
-          $retries = 10
-          $counter = 0
-          while ($counter -lt $retries) {
-            $devices = adb devices | Select-String "emulator"
-            if ($devices) { break }
-            Start-Sleep -Seconds 15
-            $counter++
-          }
-          adb wait-for-device shell getprop sys.boot_completed | Select-String "1" || Start-Sleep -Seconds 60
-          adb devices
+          boot_completed=""
+          retry=0
+          while [ "$boot_completed" != "1" ] && [ $retry -lt 15 ]; do
+            sleep 10
+            boot_completed=$(adb shell getprop sys.boot_completed | tr -d '\r')
+            echo "Boot status: $boot_completed"
+            retry=$((retry + 1))
+          done
 
-      - name: Restart ADB and Verify Emulator
-        run: |
-          adb kill-server
-          adb start-server
+          if [ "$boot_completed" != "1" ]; then
+            echo "Emulator failed to start in time"
+            exit 1
+          fi
+
           adb devices
 
       - name: Run WebdriverIO Tests
