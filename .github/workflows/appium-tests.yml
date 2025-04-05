@@ -8,7 +8,7 @@ on:
 
 jobs:
   test:
-    runs-on: ubuntu-latest  # Use Windows for compatibility
+    runs-on: ubuntu-latest  # Use Ubuntu for compatibility
 
     steps:
       - name: Checkout Repository
@@ -34,9 +34,9 @@ jobs:
 
       - name: Start Appium Server
         run: |
-          npm install -g appium
-          appium --version
-          Start-Process -NoNewWindow -FilePath "npx" -ArgumentList "appium --port 4723 --log appium.log" -PassThru
+           npm install -g appium
+           appium --version
+           nohup appium --port 4723 --log appium.log > /dev/null 2>&1 &
 
       - name: Set Up Android Emulator
         run: |
