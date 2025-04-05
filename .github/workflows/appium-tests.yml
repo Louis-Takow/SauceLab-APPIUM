@@ -1,54 +1,51 @@
-name: Android Appium Tests with WebdriverIO
+name: Android Emulator with Appium & WebdriverIO
 
 on:
   push:
-    branches: [main, feature/*]
+    branches: [main]
   pull_request:
-    branches: [main, feature/*]
 
 jobs:
-  test:
+  android-tests:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 35
 
     steps:
-      - name: Checkout Repository
+      - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set Up Node.js
+      - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 18
-          cache: 'npm'
 
-      - name: Install Dependencies
-        run: npm install
+      - name: Install dependencies
+        run: npm ci
 
-      - name: Set Up Java & Android SDK
+      - name: Set up Android SDK
         uses: android-actions/setup-android@v3
 
-      - name: Accept Licenses & Install SDK Tools
+      - name: Accept licenses & install packages
         run: |
           yes | sdkmanager --licenses
-          sdkmanager --install "platform-tools" "emulator" "system-images;android-30;google_apis;x86_64"
+          sdkmanager "platform-tools" "emulator" "system-images;android-30;google_apis;x86_64"
 
       - name: Create AVD
         run: |
           echo "Creating AVD..."
           echo "no" | avdmanager create avd -n test-emulator -k "system-images;android-30;google_apis;x86_64" --device "pixel_4"
-        env:
-          ANDROID_AVD_HOME: ${{ runner.temp }}/.android/avd
+          echo "AVD list:"
+          avdmanager list avd
 
       - name: Start Emulator
         run: |
           echo "Starting emulator..."
           $ANDROID_HOME/emulator/emulator -avd test-emulator -no-window -no-audio -gpu swiftshader_indirect -no-boot-anim &
-        env:
-          ANDROID_AVD_HOME: ${{ runner.temp }}/.android/avd
+          sleep 5
 
       - name: Wait for Emulator to Boot
         run: |
-          echo "Waiting for emulator..."
+          echo "Waiting for emulator to boot..."
           adb wait-for-device
           boot_completed=""
           retries=0
@@ -58,27 +55,20 @@ jobs:
             sleep 10
             ((retries++))
           done
-
           if [[ "$boot_completed" != "1" ]]; then
             echo "❌ Emulator failed to boot in time"
             exit 1
           fi
           adb devices
 
-      - name: Start Appium Server
+      - name: Start Appium
         run: |
           npm install -g appium
           nohup appium --port 4723 > appium.log 2>&1 &
 
       - name: Run WebdriverIO Tests
-        run: npm test
-
-      - name: Upload Test Reports
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: test-reports
-          path: test-results/
+        run: npm run test
 
       - name: Kill Emulator
+        if: always()
         run: adb -s emulator-5554 emu kill || true
