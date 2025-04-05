@@ -20,62 +20,47 @@ jobs:
           node-version: 18
           cache: 'npm'
 
-      - name: Install Dependencies
+      - name: Install Node Dependencies
         run: npm install
 
       - name: Set Up Java & Android SDK
         uses: android-actions/setup-android@v3
 
-      - name: Accept Licenses and Install SDK Components
+      - name: Accept Licenses & Install Emulator Packages
         run: |
           yes | sdkmanager --licenses
-          sdkmanager --install "platform-tools" "emulator" "platforms;android-30" \
-            "system-images;android-30;google_apis;x86_64" "cmdline-tools;latest"
+          sdkmanager --install "platform-tools" "emulator" "system-images;android-30;google_apis;x86_64"
 
-      - name: Start Appium Server
+      - name: Create AVD
+        run: |
+          echo "no" | avdmanager create avd -n test-emulator -k "system-images;android-30;google_apis;x86_64" --device "pixel_4"
+
+      - name: Start Emulator
+        run: |
+          $ANDROID_HOME/emulator/emulator -avd test-emulator -no-window -no-audio -gpu swiftshader_indirect -no-boot-anim &
+          EMU_BOOTED=""
+          for i in {1..30}; do
+            EMU_BOOTED=$(adb -e shell getprop sys.boot_completed 2>/dev/null | tr -d '\r')
+            if [ "$EMU_BOOTED" = "1" ]; then
+              echo "Emulator booted successfully."
+              break
+            fi
+            echo "Waiting for emulator... ($i)"
+            sleep 10
+          done
+          if [ "$EMU_BOOTED" != "1" ]; then
+            echo "❌ Emulator failed to boot in time"
+            exit 1
+          fi
+          adb shell input keyevent 82
+
+      - name: Install Appium & Start Server
         run: |
           npm install -g appium
           nohup appium --port 4723 --log appium.log > /dev/null 2>&1 &
+          sleep 10  # Give Appium time to spin up
 
-      - name: Create and Start Android Emulator
-        run: |
-          echo "Creating AVD..."
-          echo "no" | avdmanager create avd -n test -k "system-images;android-30;google_apis;x86_64" --device "pixel"
-
-          echo "Starting emulator..."
-          nohup $ANDROID_HOME/emulator/emulator -avd test -no-audio -no-window -gpu swiftshader_indirect -no-snapshot -no-boot-anim > emulator.log 2>&1 &
-
-          echo "Waiting for emulator to appear in adb..."
-          retry=0
-          until adb devices | grep emulator || [ $retry -gt 20 ]; do
-            echo "Waiting for emulator device... attempt $retry"
-            sleep 10
-            ((retry++))
-          done
-
-          echo "Waiting for emulator to boot..."
-          boot_completed=""
-          retry=0
-          until [[ "$boot_completed" == "1" || $retry -gt 20 ]]; do
-            boot_completed=$(adb shell getprop sys.boot_completed 2>/dev/null | tr -d '\r')
-            echo "Boot status: $boot_completed"
-            sleep 10
-            ((retry++))
-          done
-
-          if [[ "$boot_completed" != "1" ]]; then
-            echo "❌ Emulator failed to boot in time. Emulator log:"
-            cat emulator.log
-            exit 1
-          fi
-
-      - name: Restart ADB and Verify Emulator
-        run: |
-          adb kill-server
-          adb start-server
-          adb devices
-
-      - name: Run WebdriverIO Tests
+      - name: Run WebDriverIO Tests
         run: npm test
 
       - name: Upload Test Reports
@@ -85,5 +70,6 @@ jobs:
           name: test-reports
           path: test-results/
 
-      - name: Stop Emulator
-        run: adb -s emulator-5554 emu kill
+      - name: Kill Emulator
+        if: always()
+        run: adb -s emulator-5554 emu kill || true
