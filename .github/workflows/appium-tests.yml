@@ -28,30 +28,31 @@ jobs:
 
       - name: Install Required Android SDK Components
         run: |
-          echo "Installing required SDK components..."
-          sdkmanager --sdk_root=$ANDROID_SDK_ROOT \
+          echo "Installing Android SDK packages..."
+          yes | sdkmanager --licenses
+          sdkmanager \
             "platform-tools" \
             "emulator" \
             "cmdline-tools;latest" \
             "system-images;android-30;google_apis_playstore;x86_64"
 
-      - name: Set up AVD
+      - name: Create and Start Emulator
         run: |
           echo "Creating AVD..."
-          echo "no" | avdmanager create avd -n test-emulator \
+          export AVD_NAME=test-emulator
+          export ANDROID_SDK_ROOT=$ANDROID_HOME
+          echo "no" | avdmanager create avd -n $AVD_NAME \
             -k "system-images;android-30;google_apis_playstore;x86_64" \
-            --device "pixel"
+            --device "pixel" --force
 
-      - name: Start Emulator
-        run: |
           echo "Starting emulator..."
-          $ANDROID_HOME/emulator/emulator -avd test-emulator -no-audio -no-window -gpu swiftshader_indirect -no-boot-anim &
-          EMULATOR_PID=$!
+          $ANDROID_HOME/emulator/emulator -avd $AVD_NAME \
+            -no-audio -no-window -gpu swiftshader_indirect -no-boot-anim > /dev/null 2>&1 &
 
           echo "Waiting for emulator to boot..."
           boot_completed=""
           retries=0
-          while [[ "$boot_completed" != "1" && $retries -lt 30 ]]; do
+          until [[ "$boot_completed" == "1" || $retries -ge 30 ]]; do
             boot_completed=$(adb shell getprop sys.boot_completed 2>/dev/null | tr -d '\r')
             echo "Boot status: $boot_completed"
             sleep 10
@@ -59,7 +60,7 @@ jobs:
           done
 
           if [[ "$boot_completed" != "1" ]]; then
-            echo "Emulator failed to boot in time"
+            echo "❌ Emulator failed to boot in time"
             exit 1
           fi
 
