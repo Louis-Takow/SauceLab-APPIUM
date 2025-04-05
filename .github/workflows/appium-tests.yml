@@ -14,7 +14,7 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Set Up Node.js
+      - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 18
@@ -23,40 +23,30 @@ jobs:
       - name: Install Dependencies
         run: npm install
 
-      - name: Set Up Java & Android SDK
+      - name: Set up Java & Android SDK
         uses: android-actions/setup-android@v3
 
-      - name: Install Required Android SDK Components
+      - name: Install Android SDK Components
         run: |
-          echo "Installing Android SDK packages..."
+          sdkmanager --install "platform-tools" "emulator" "platforms;android-30" "system-images;android-30;google_apis;x86_64"
           yes | sdkmanager --licenses
-          sdkmanager \
-            "platform-tools" \
-            "emulator" \
-            "cmdline-tools;latest" \
-            "system-images;android-30;google_apis_playstore;x86_64"
 
-      - name: Create and Start Emulator
+      - name: Create and Start Android Emulator
         run: |
           echo "Creating AVD..."
-          export AVD_NAME=test-emulator
-          export ANDROID_SDK_ROOT=$ANDROID_HOME
-          echo "no" | avdmanager create avd -n $AVD_NAME \
-            -k "system-images;android-30;google_apis_playstore;x86_64" \
-            --device "pixel" --force
+          echo "no" | avdmanager create avd -n test -k "system-images;android-30;google_apis;x86_64" --device "pixel"
 
           echo "Starting emulator..."
-          $ANDROID_HOME/emulator/emulator -avd $AVD_NAME \
-            -no-audio -no-window -gpu swiftshader_indirect -no-boot-anim > /dev/null 2>&1 &
+          nohup $ANDROID_HOME/emulator/emulator -avd test -no-audio -no-window -gpu swiftshader_indirect -no-snapshot -no-boot-anim > emulator.log 2>&1 &
 
           echo "Waiting for emulator to boot..."
           boot_completed=""
-          retries=0
-          until [[ "$boot_completed" == "1" || $retries -ge 30 ]]; do
+          retry=0
+          until [[ "$boot_completed" == "1" || $retry -gt 20 ]]; do
             boot_completed=$(adb shell getprop sys.boot_completed 2>/dev/null | tr -d '\r')
             echo "Boot status: $boot_completed"
-            sleep 10
-            retries=$((retries+1))
+            sleep 15
+            ((retry++))
           done
 
           if [[ "$boot_completed" != "1" ]]; then
@@ -67,7 +57,7 @@ jobs:
       - name: Start Appium Server
         run: |
           npm install -g appium
-          nohup appium --port 4723 --log appium.log > /dev/null 2>&1 &
+          nohup appium --port 4723 > appium.log 2>&1 &
 
       - name: Run WebdriverIO Tests
         run: npm test
@@ -80,4 +70,4 @@ jobs:
           path: test-results/
 
       - name: Stop Emulator
-        run: adb -s emulator-5554 emu kill || true
+        run: adb -s emulator-5554 emu kill
